@@ -1,0 +1,10 @@
+#!/bin/sh
+DIR=$(pwd)
+cd $DIR/rails && \
+export SECRET_KEY_BASE=$(bin/rails secret) && \
+bundle && \
+RAILS_ENV=production rails db:migrate &&
+rails s -e production > /dev/null 2>&1 &
+cd $DIR/bench && cargo run --release
+kill -9 $(lsof -t -i :3000) && \
+\mv $DIR/bench/result.csv $DIR/
